@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><Pisemnost nazevSW="EPO MF &#268;R" verzeSW="41.25.2">
+<DPHDP3 verzePis="01.02">
+		<VetaD c_okec="620000" d_poddp="21.03.2021" dapdph_forma="B" dokument="DP3" k_uladis="DPH" mesic="3" rok="2021" trans="A" typ_platce="P"/>
+		<VetaP c_orient="32" c_pop="2052" c_telef="775686672" c_ufo="453" c_pracufo="2201" dic="8705201362" email="pavel@ppetr.cz" jmeno="Pavel" naz_obce="&#268;esk&#233; Bud&#283;jovice" prijmeni="Petr" psc="37007" stat="&#268;ESK&#193; REPUBLIKA" typ_ds="F" ulice="Sadov&#225;"/>
+		<Veta1 dan23="0" obrat23="0"/>
+		<Veta4 odp_sum_nar="0" odp_tuz23_nar="0" pln23="0"/>
+		<Veta6 dan_zocelk="0" dano="0" dano_da="17547" dano_no="0" odp_zocelk="0"/>
+	</DPHDP3>
+</Pisemnost>
