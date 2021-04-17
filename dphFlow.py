@@ -3,7 +3,7 @@ from datetime import date
 import pandas as pd
 
 
-def execute():
+def execute(m, y):
     tree = et.parse('template_dph.xml')
     root = tree.getroot()
     DPHDP3 = root.find("DPHDP3")
@@ -11,11 +11,11 @@ def execute():
     # print(et.tostring(root, pretty_print=True).decode("utf-8"))
 
     # Vypočet
-    month = int(input("Měsíc: "))  # zadám měsíc
-    year = int(input("Rok: "))  # zadám rok
+    month = m
+    year = y
 
-    prijmy = pd.read_excel("A://OSVC//dph//evidence.xlsx", sheet_name="prijmy")
-    vydaje = pd.read_excel("A://OSVC//dph//evidence.xlsx", sheet_name="vydaje")
+    prijmy = pd.read_excel("A://OSVC//dph//evidence.xlsx", sheet_name="prijmy", engine='openpyxl')
+    vydaje = pd.read_excel("A://OSVC//dph//evidence.xlsx", sheet_name="vydaje", engine='openpyxl')
 
     # načtu zdrojova data
     # dan na vstupu
@@ -23,15 +23,15 @@ def execute():
     vyd_sum_cbd = 0
     vyd_sum_dph = 0
     for index, item in vydaje.iterrows():
-        if item["mesic"] == month and item["rok"] == year:
-            vyd_sum_cbd += item["castka_bez_dph"]
-            vyd_sum_dph += item["dph"]
+        if item["mesic"] == int(month) and item["rok"] == int(year):
+            vyd_sum_cbd = vyd_sum_cbd + item["castka_bez_dph"]
+            vyd_sum_dph = vyd_sum_dph + item["dph"]
 
     # dan na vystupu
     prij_sum_cbd = 0
     prij_sum_dph = 0
     for index, item in prijmy.iterrows():
-        if item["mesic"] == month and item["rok"] == year:
+        if item["mesic"] == int(month) and item["rok"] == int(year):
             prij_sum_cbd += item["castka_bez_dph"]
             prij_sum_dph += item["dph"]
 
@@ -75,11 +75,11 @@ def execute():
     else:
         DPHDP3.find("Veta6").set("dano_no", str(abs(round(vysledek))))
 
-    print(et.tostring(root).decode("utf-8"))
+    # print(et.tostring(root).decode("utf-8"))
 
     mydata = et.tostring(root)
     head = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 
-    with open("items2.xml", "w") as f:
+    with open("dph_output.xml", "w") as f:
         f.write(head)
         f.write(str(mydata.decode("utf-8")))

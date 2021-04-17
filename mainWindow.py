@@ -4,15 +4,15 @@ import dphFlow
 
 # const
 month = {
-    "leden": "01",
-    "unor": "02",
-    "brezen": "03",
-    "duben": "04",
-    "kveten": "05",
-    "cerven": "06",
-    "cervenec": "07",
-    "srpen": "08",
-    "zari": "09",
+    "leden": "1",
+    "unor": "2",
+    "brezen": "3",
+    "duben": "4",
+    "kveten": "5",
+    "cerven": "6",
+    "cervenec": "7",
+    "srpen": "8",
+    "zari": "9",
     "rijen": "10",
     "listopad": "11",
     "prosinec": "12"
@@ -21,6 +21,7 @@ month = {
 
 def displayMainWindow():
     layout = [
+        [Sg.Text("Vyberte šablonu, měsíc, rok a cílové umístění XMLka.")],
         [Sg.Text("Vyber mesic a rok"), Sg.Combo(
             ['leden', 'unor', 'brezen', 'duben', 'kveten', 'cerven', 'cervenec', 'srpen', 'zari', 'rijen', 'listopad',
              'prosinec'], default_value="brezen", enable_events=True, key='combo_month')],
@@ -29,7 +30,7 @@ def displayMainWindow():
         [Sg.Button("Calculate")]]
 
     # Create the window
-    window = Sg.Window("DPH&KH", layout, size=(300, 120))
+    window = Sg.Window("DPH&KH", layout, size=(300, 170))
 
     # Create an event loop
     while True:
@@ -39,11 +40,9 @@ def displayMainWindow():
         if event == "Calculate":
             m = values["combo_month"]
             nm = month[m]
-            print(nm)
-
             y = values["combo_year"]
-            print(y)
-            # dphFlow.execute()
+            dphFlow.execute(nm, y)
+
         elif event == Sg.WIN_CLOSED:
             break
 
