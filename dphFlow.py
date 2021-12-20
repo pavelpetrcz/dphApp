@@ -1,7 +1,7 @@
 import os
-
 import lxml.etree as et
 import pandas as pd
+import logging
 
 import commonMethods
 
@@ -40,10 +40,19 @@ def execute(month, year, dphOutputLoc, dphTempFile):
     # dan na vystupu
     prij_sum_cbd = 0
     prij_sum_dph = 0
+    prij_sum_cbd_15 = 0
+    prij_sum_dph_15 = 0
     for index, item in incomes.iterrows():
         if item["mesic"] == int(month) and item["rok"] == int(year):
-            prij_sum_cbd += item["castka_bez_dph"]
-            prij_sum_dph += item["dph"]
+            if item["sazba"] == 21:
+                prij_sum_cbd += item["castka_bez_dph"]
+                prij_sum_dph += item["dph"]
+            elif item["sazba"] == 15:
+                prij_sum_cbd_15 += item["castka_bez_dph"]
+                prij_sum_dph_15 += item["dph"]
+            else:
+                logging.warning("Snizena sazba 10% na vystupu.")
+                raise Exception("Pozor - snizena sazba 10% na vystupu.")
 
     # VetaD
     # - datum vystavení - d_poddp
@@ -54,10 +63,15 @@ def execute(month, year, dphOutputLoc, dphTempFile):
     DPHDP3.find("VetaD").set("d_poddp", datum_podani)
 
     # Veta1
+    # 21%
     # - dan na vystupu - dan23
     # - zaklad na vystupu - obrat23
     DPHDP3.find("Veta1").set("dan23", str(round(prij_sum_dph)))
     DPHDP3.find("Veta1").set("obrat23", str(round(prij_sum_cbd)))
+
+    # 15%
+    DPHDP3.find("Veta1").set("dan5", str(round(prij_sum_dph_15)))
+    DPHDP3.find("Veta1").set("obrat5", str(round(prij_sum_cbd_15)))
 
     # Veta4
     # 21%
@@ -76,10 +90,10 @@ def execute(month, year, dphOutputLoc, dphTempFile):
     # - celkova dan vystupu - dan_zocelk
     # - rozdil dani na vstupu a vystupu - dano_da / dano_no - da -> když na vystup je vysi nez na vstupu, pokud jinak -> no
     # - celkova dan na vstupu - odp_zocelk
-    DPHDP3.find("Veta6").set("dan_zocelk", str(round(prij_sum_dph)))
+    DPHDP3.find("Veta6").set("dan_zocelk", str(round(prij_sum_dph + prij_sum_dph_15)))
     DPHDP3.find("Veta6").set("odp_zocelk", str(round(vyd_sum_dph + vyd_sum_dph_snizena)))
 
-    vysledek = prij_sum_dph - vyd_sum_dph - vyd_sum_dph_snizena
+    vysledek = prij_sum_dph + prij_sum_dph_15 - vyd_sum_dph - vyd_sum_dph_snizena
 
     if vysledek > 0:
         DPHDP3.find("Veta6").set("dano_da", str(abs(round(vysledek))))
