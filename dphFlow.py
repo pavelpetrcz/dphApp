@@ -18,27 +18,24 @@ def execute(month, year, dphOutputLoc, dphTempFile):
     root = tree.getroot()
     DPHDP3 = root.find("DPHDP3")
 
-    # print(et.tostring(root, pretty_print=True).decode("utf-8"))
-
     # load source data
     incomes = pd.read_excel("A://OSVC//dph//evidence.xlsx", sheet_name="prijmy", engine='openpyxl')
     expenses = pd.read_excel("A://OSVC//dph//evidence.xlsx", sheet_name="vydaje", engine='openpyxl')
 
     # dan na vstupu
-    # ve vydajich najdu odpovídající měsic a rok a spočtu součet
     vyd_sum_cbd = 0
     vyd_sum_dph = 0
-    vyd_sum_cbd10 = 0
-    vyd_sum_dph10 = 0
+    vyd_sum_cbd_snizena = 0
+    vyd_sum_dph_snizena = 0
 
     for index, item in expenses.iterrows():
         if item["mesic"] == int(month) and item["rok"] == int(year):
             if item["dan"] == 21:
                 vyd_sum_cbd = vyd_sum_cbd + item["castka_bez_dph"]
                 vyd_sum_dph = vyd_sum_dph + item["dph"]
-            elif item["dan"] == 10:
-                vyd_sum_cbd10 = vyd_sum_cbd10 + item["castka_bez_dph"]
-                vyd_sum_dph10 = vyd_sum_dph10 + item["dph"]
+            elif item["dan"] == 10 or item["dan"] == 15:
+                vyd_sum_cbd_snizena = vyd_sum_cbd_snizena + item["castka_bez_dph"]
+                vyd_sum_dph_snizena = vyd_sum_dph_snizena + item["dph"]
 
     # dan na vystupu
     prij_sum_cbd = 0
@@ -48,10 +45,7 @@ def execute(month, year, dphOutputLoc, dphTempFile):
             prij_sum_cbd += item["castka_bez_dph"]
             prij_sum_dph += item["dph"]
 
-    # Co měnit v XMLku
     # VetaD
-    # - mesic - mesic
-    # - rok - rok
     # - datum vystavení - d_poddp
     datum_podani = commonMethods.getTodayDateAsString()
 
@@ -70,28 +64,28 @@ def execute(month, year, dphOutputLoc, dphTempFile):
     # součtový řádek - odp_sum_nar, dan na vstupu - odp_tuz23_nar, castka bez dph na vstupu - pln23
     DPHDP3.find("Veta4").set("pln23", str(round(vyd_sum_cbd)))
     DPHDP3.find("Veta4").set("odp_tuz23_nar", str(round(vyd_sum_dph)))
-    DPHDP3.find("Veta4").set("odp_sum_nar", str(round(vyd_sum_dph)))
+    # DPHDP3.find("Veta4").set("odp_sum_nar", str(round(vyd_sum_dph)))
 
-    # 10%
-    DPHDP3.find("Veta4").set("odp_sum_nar", str(round(vyd_sum_dph10 + vyd_sum_cbd10)))
-    DPHDP3.find("Veta4").set("odp_tuz23_nar", str(round(vyd_sum_cbd10)))
-    DPHDP3.find("Veta4").set("odp_tuz5_nar", str(round(vyd_sum_dph10)))
+    # snizena sazba (10 % a 15%)
+    DPHDP3.find("Veta4").set("pln5", str(round(vyd_sum_cbd_snizena)))
+    DPHDP3.find("Veta4").set("odp_tuz5_nar", str(round(vyd_sum_dph_snizena)))
+    # soucet
+    DPHDP3.find("Veta4").set("odp_sum_nar", str(round(vyd_sum_dph_snizena + vyd_sum_dph)))
 
     # Veta6
     # - celkova dan vystupu - dan_zocelk
     # - rozdil dani na vstupu a vystupu - dano_da / dano_no - da -> když na vystup je vysi nez na vstupu, pokud jinak -> no
     # - celkova dan na vstupu - odp_zocelk
     DPHDP3.find("Veta6").set("dan_zocelk", str(round(prij_sum_dph)))
-    DPHDP3.find("Veta6").set("odp_zocelk", str(round(vyd_sum_dph)))
+    DPHDP3.find("Veta6").set("odp_zocelk", str(round(vyd_sum_dph + vyd_sum_dph_snizena)))
 
-    vysledek = prij_sum_dph - vyd_sum_dph
+    vysledek = prij_sum_dph - vyd_sum_dph - vyd_sum_dph_snizena
 
     if vysledek > 0:
         DPHDP3.find("Veta6").set("dano_da", str(abs(round(vysledek))))
     else:
         DPHDP3.find("Veta6").set("dano_no", str(abs(round(vysledek))))
 
-    # print(et.tostring(root).decode("utf-8"))
     mydata = et.tostring(root)
     head = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 

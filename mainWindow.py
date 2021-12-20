@@ -1,11 +1,10 @@
+import time
 import PySimpleGUI as Sg
-from datetime import date
 
 import dphFlow
-
-# const
 import khFlow
 
+# constants
 month = {
     "leden": "1",
     "unor": "2",
@@ -28,15 +27,31 @@ def displayMainWindow():
     ktTempLoc = "C:/Users/pavel/Desktop/template_kh.xml"
 
     def getMonthAndYear():
+        """
+        convert strings to numerical records
+        :return: dict with choosen month and year
+        """
         nm = month[values["combo_month"]]
         y = values["combo_year"]
         result = {"nm": nm, "y": y}
         return result
 
-    month_key = date.month
-    print(month_key)
+    def getNameOfThisMonth():
+        """
+        get name of actual month
+        :return: czech name of actual month
+        """
+        actualMonth = time.strftime("%m")
+        actualMonth = int(actualMonth) - 1  # minus one to fix offset in list
+        key_list = list(month.keys())
+        return key_list[actualMonth]
 
-
+    def getThisYear():
+        """
+        get this year - example string "2021"
+        :return: string with year
+        """
+        return time.strftime("%Y")
 
     tab1_layout = [
 
@@ -44,7 +59,8 @@ def displayMainWindow():
         [Sg.Text('Šablona:', size=(7, 1)), Sg.InputText(default_text=dphTempLoc),
          Sg.FileBrowse(key='dphtempFile', file_types=(("XML Files", "*.xml"),),
                        initial_folder='C:\\Users\\pavel\\Desktop\\')],
-        [Sg.Text('Výstupní složka:', size=(12, 1)), Sg.InputText(default_text='C:\\Users\\pavel\\Desktop\\'), Sg.FolderBrowse(key='dphTempLoc')],
+        [Sg.Text('Výstupní složka:', size=(12, 1)), Sg.InputText(default_text='C:\\Users\\pavel\\Desktop\\'),
+         Sg.FolderBrowse(key='dphTempLoc')],
         [Sg.Button("Generuj DPH", button_color='red')]
     ]
 
@@ -53,7 +69,8 @@ def displayMainWindow():
         [Sg.Text('Šablona:', size=(7, 1)), Sg.InputText(default_text=ktTempLoc),
          Sg.FileBrowse(key='khTempFile', file_types=(("XML Files", "*.xml"),),
                        initial_folder='C:\\Users\\pavel\\Desktop\\')],
-        [Sg.Text('Výstupní složka:', size=(12, 1)), Sg.InputText(default_text='C:\\Users\\pavel\\Desktop\\'), Sg.FolderBrowse(key='ktTempLoc')],
+        [Sg.Text('Výstupní složka:', size=(12, 1)), Sg.InputText(default_text='C:\\Users\\pavel\\Desktop\\'),
+         Sg.FolderBrowse(key='ktTempLoc')],
         [Sg.Button("Generuj KH", button_color='red')]
     ]
 
@@ -61,8 +78,8 @@ def displayMainWindow():
         [Sg.Text("Vyberte měsíc a rok")],
         [Sg.Combo(
             ['leden', 'unor', 'brezen', 'duben', 'kveten', 'cerven', 'cervenec', 'srpen', 'zari', 'rijen', 'listopad',
-             'prosinec'], default_value="brezen", enable_events=True, key='combo_month'),
-            Sg.Combo(["2021", "2022", "2023"], default_value="2021", enable_events=True, key='combo_year')],
+             'prosinec'], default_value=getNameOfThisMonth(), enable_events=True, key='combo_month'),
+            Sg.Combo(["2021", "2022", "2023"], default_value=getThisYear(), enable_events=True, key='combo_year')],
         [Sg.Text()],
         [Sg.Frame('Dan z pridane hodnoty', tab1_layout, font='Any 12', title_color='white')],
         [Sg.Frame('Kontrolni hlaseni', tab2_layout, font='Any 12', title_color='white')]
@@ -82,8 +99,11 @@ def displayMainWindow():
             dphFlow.execute(data["nm"], data["y"], defaultOutputLoc, dphLoc)
 
         elif event == "Generuj KH":
-            khloc = values["khTempFile"] if values["khTempFile"] != "" else ktTempLoc
-            khFlow.execute(data["nm"], data["y"], defaultOutputLoc, khloc)
+            try:
+                khloc = values["khTempFile"] if values["khTempFile"] != "" else ktTempLoc
+                khFlow.execute(data["nm"], data["y"], defaultOutputLoc, khloc)
+            except ValueError as e:
+                Sg.popup_error(e, title='Chyba', modal=True)
 
         elif event == Sg.WIN_CLOSED:
             break
