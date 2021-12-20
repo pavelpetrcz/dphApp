@@ -1,3 +1,4 @@
+import time
 from datetime import date
 
 
@@ -8,3 +9,11 @@ def getTodayDateAsString():
     """
     today = date.today()
     return today.strftime("%d.%m.%Y")
+
+
+def getThisYear():
+    """
+    get this year - example string "2021"
+    :return: string with year
+    """
+    return time.strftime("%Y")

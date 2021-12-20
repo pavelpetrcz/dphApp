@@ -3,6 +3,7 @@ import PySimpleGUI as Sg
 
 import dphFlow
 import khFlow
+import commonMethods as cm
 
 # constants
 month = {
@@ -46,13 +47,6 @@ def displayMainWindow():
         key_list = list(month.keys())
         return key_list[actualMonth]
 
-    def getThisYear():
-        """
-        get this year - example string "2021"
-        :return: string with year
-        """
-        return time.strftime("%Y")
-
     tab1_layout = [
 
         [Sg.Text("Vyberte XML šablonu a umístění výstupu:")],
@@ -79,7 +73,7 @@ def displayMainWindow():
         [Sg.Combo(
             ['leden', 'unor', 'brezen', 'duben', 'kveten', 'cerven', 'cervenec', 'srpen', 'zari', 'rijen', 'listopad',
              'prosinec'], default_value=getNameOfThisMonth(), enable_events=True, key='combo_month'),
-            Sg.Combo(["2021", "2022", "2023"], default_value=getThisYear(), enable_events=True, key='combo_year')],
+            Sg.Combo(["2021", "2022", "2023"], default_value=cm.getThisYear(), enable_events=True, key='combo_year')],
         [Sg.Text()],
         [Sg.Frame('Dan z pridane hodnoty', tab1_layout, font='Any 12', title_color='white')],
         [Sg.Frame('Kontrolni hlaseni', tab2_layout, font='Any 12', title_color='white')]
