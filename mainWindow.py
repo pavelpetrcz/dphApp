@@ -37,15 +37,16 @@ def displayMainWindow():
         result = {"nm": nm, "y": y}
         return result
 
-    def getNameOfThisMonth():
+    def getNameOfPreviousMonth():
         """
         get name of actual month
         :return: czech name of actual month
         """
-        actualMonth = time.strftime("%m")
-        actualMonth = int(actualMonth) - 1  # minus one to fix offset in list
+        actualMonth = int(time.strftime("%m"))
+        # minus two to fix offset in list and set previous; if month is 1
+        am = actualMonth + 10 if actualMonth == 1 else actualMonth - 2
         key_list = list(month.keys())
-        return key_list[actualMonth]
+        return key_list[am]
 
     tab1_layout = [
 
@@ -72,7 +73,7 @@ def displayMainWindow():
         [Sg.Text("Vyberte měsíc a rok")],
         [Sg.Combo(
             ['leden', 'unor', 'brezen', 'duben', 'kveten', 'cerven', 'cervenec', 'srpen', 'zari', 'rijen', 'listopad',
-             'prosinec'], default_value=getNameOfThisMonth(), enable_events=True, key='combo_month'),
+             'prosinec'], default_value=getNameOfPreviousMonth(), enable_events=True, key='combo_month'),
             Sg.Combo(["2021", "2022", "2023"], default_value=cm.getThisYear(), enable_events=True, key='combo_year')],
         [Sg.Text()],
         [Sg.Frame('Dan z pridane hodnoty', tab1_layout, font='Any 12', title_color='white')],

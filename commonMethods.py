@@ -16,4 +16,10 @@ def getThisYear():
     get this year - example string "2021"
     :return: string with year
     """
-    return time.strftime("%Y")
+    if time.strftime("%m") == "1":
+        year = int(time.strftime("%Y"))
+        return str(year-1)
+    else:
+        return time.strftime("%Y")
+
+
