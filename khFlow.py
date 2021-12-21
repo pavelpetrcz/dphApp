@@ -29,25 +29,36 @@ def execute(numMonth, year, khOutputLoc, khTempFile):
     DPHKH1.find("VetaD").set("rok", str(year))
     DPHKH1.find("VetaD").set("d_poddp", datum_podani)
 
-    # VetaA4
+    # Incomes
+    # VetaA4+A5
     num = 1
     obrat = 0
     dan = 0
+    obrat15 = 0
+    dan15 = 0
     for index, item in incomes.iterrows():
         if item["mesic"] == int(numMonth) and item["rok"] == int(year):
-            obrat = obrat + item["castka_bez_dph"]
-            dan = dan + item["dph"]
-            A4 = et.SubElement(root.find("DPHKH1"), 'VetaA4')
-            A4.set('c_radku', str(num))
-            A4.set('dic_odb', str(item["dic"]))
-            A4.set('c_evid_dd', str(item["cisloDokladu"]))
-            A4.set('dppd', str(item["duzp"].strftime("%d.%m.%Y")))
-            A4.set('zakl_dane1', str(round(item["castka_bez_dph"])))
-            A4.set('dan1', str(round(item["dph"])))
-            A4.set('kod_rezim_pl', '0')
-            A4.set('zdph_44', 'N')
-            num = num + 1
+            if not pd.isna(item["dic"]):
+                obrat = obrat + item["castka_bez_dph"]
+                dan = dan + item["dph"]
+                A4 = et.SubElement(root.find("DPHKH1"), 'VetaA4')
+                A4.set('c_radku', str(num))
+                A4.set('dic_odb', str(item["dic"]))
+                A4.set('c_evid_dd', str(item["cisloDokladu"]))
+                A4.set('dppd', str(item["duzp"].strftime("%d.%m.%Y")))
+                A4.set('zakl_dane1', str(round(item["castka_bez_dph"])))
+                A4.set('dan1', str(round(item["dph"])))
+                A4.set('kod_rezim_pl', '0')
+                A4.set('zdph_44', 'N')
+                num = num + 1
+            else:
+                obrat15 = obrat15 + item["castka_bez_dph"]
+                dan15 = dan15 + item["dph"]
+    A5 = et.SubElement(root.find("DPHKH1"), 'VetaA5')
+    A5.set('zakl_dane2', str(round(obrat15)))
+    A5.set('dan2', str(round(dan15)))
 
+    #Expenses
     # VetaB3+B2
     dan_21 = 0
     zaklad_dane_21 = 0
