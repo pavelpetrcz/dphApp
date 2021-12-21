@@ -43,7 +43,7 @@ def execute(numMonth, year, khOutputLoc, khTempFile):
                 dan = dan + item["dph"]
                 A4 = et.SubElement(root.find("DPHKH1"), 'VetaA4')
                 A4.set('c_radku', str(num))
-                A4.set('dic_odb', str(item["dic"]))
+                A4.set('dic_odb', str(int(item["dic"])))
                 A4.set('c_evid_dd', str(item["cisloDokladu"]))
                 A4.set('dppd', str(item["duzp"].strftime("%d.%m.%Y")))
                 A4.set('zakl_dane1', str(round(item["castka_bez_dph"])))
