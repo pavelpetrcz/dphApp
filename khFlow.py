@@ -58,7 +58,7 @@ def execute(numMonth, year, khOutputLoc, khTempFile):
     A5.set('zakl_dane2', str(round(obrat15)))
     A5.set('dan2', str(round(dan15)))
 
-    #Expenses
+    # Expenses
     # VetaB3+B2
     dan_21 = 0
     zaklad_dane_21 = 0
