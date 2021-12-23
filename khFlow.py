@@ -82,11 +82,11 @@ def execute(numMonth, year, khOutputLoc, khTempFile):
                 ex_castka_bez_dph_celkem_21 = ex_castka_bez_dph_celkem_21 + ex_castka_bez_dph
                 ex_dph_celkem_21 = ex_dph_celkem_21 + ex_castka_dph
             elif ex_castka_celkem < 10000 and ex_sazba == 15:
-                ex_castka_bez_dph_celkem_15 = + ex_castka_bez_dph
-                ex_dph_celkem_15 = + ex_castka_dph
+                ex_castka_bez_dph_celkem_15 = ex_castka_bez_dph_celkem_15 + ex_castka_bez_dph
+                ex_dph_celkem_15 = ex_dph_celkem_15 + ex_castka_dph
             elif ex_castka_celkem < 10000 and ex_sazba == 10:
-                ex_castka_bez_dph_celkem_10 = + ex_castka_bez_dph
-                ex_dph_celkem_10 = + ex_castka_dph
+                ex_castka_bez_dph_celkem_10 = ex_castka_bez_dph_celkem_10 + ex_castka_bez_dph
+                ex_dph_celkem_10 = ex_dph_celkem_10 + ex_castka_dph
             elif ex_castka_celkem >= 10000:
                 if ex_sazba == 21:
                     B2 = et.SubElement(root.find("DPHKH1"), 'VetaB2')
@@ -109,6 +109,7 @@ def execute(numMonth, year, khOutputLoc, khTempFile):
 
             else:
                 continue
+
     B3 = et.SubElement(root.find("DPHKH1"), 'VetaB3')
     B3.set('zakl_dane1', str(round(ex_castka_bez_dph_celkem_21)))
     B3.set('dan1', str(round(ex_dph_celkem_21)))
@@ -117,11 +118,13 @@ def execute(numMonth, year, khOutputLoc, khTempFile):
     B3.set('dan2', str(round(ex_dph_celkem_15)))
     B3.set('zakl_dane2', str(round(ex_castka_bez_dph_celkem_15)))
 
-    # VetaC
+    # VetaC - kontrolni radky
     C = et.SubElement(root.find("DPHKH1"), 'VetaC')
     C.set('obrat23', str(round(in_castka_bez_dph21)))
+    C.set('obrat5', str(round(in_castka_bez_dph_15)))
+
     C.set('pln23', str(round(ex_castka_bez_dph_celkem_21)))
-    C.set('pln5', str(ex_castka_bez_dph_celkem_15 + ex_castka_bez_dph_celkem_10))
+    C.set('pln5', str(round(ex_castka_bez_dph_celkem_15 + ex_castka_bez_dph_celkem_10)))
 
     file_name = "kh_output.xml"
     head = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
