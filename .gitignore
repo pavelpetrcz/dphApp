@@ -5,3 +5,4 @@ resource
 build
 dist
 main.spec
+.pytest_cache
