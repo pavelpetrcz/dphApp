@@ -30,10 +30,10 @@ def execute(month, year, dphOutputLoc, dphTempFile):
 
     for index, item in expenses.iterrows():
         if item["mesic"] == int(month) and item["rok"] == int(year):
-            if item["dan"] == 21:
+            if item["sazba"] == 21:
                 vyd_sum_cbd = vyd_sum_cbd + item["castka_bez_dph"]
                 vyd_sum_dph = vyd_sum_dph + item["dph"]
-            elif item["dan"] == 10 or item["dan"] == 15:
+            elif item["sazba"] == 10 or item["sazba"] == 15:
                 vyd_sum_cbd_snizena = vyd_sum_cbd_snizena + item["castka_bez_dph"]
                 vyd_sum_dph_snizena = vyd_sum_dph_snizena + item["dph"]
 
