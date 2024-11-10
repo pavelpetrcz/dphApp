@@ -95,7 +95,7 @@ def execute(numMonth, year, khOutputLoc, khTempFile):
                     B2.set('c_evid_dd', str(item["cisloDokladu"]))
                     B2.set('dppd', str(item["duzp"].strftime("%d.%m.%Y")))
                     B2.set('zakl_dane1', str(round(item["castka_bez_dph"])))
-                    B2.set(str(round(item["dph"])))
+                    B2.set('dan1', str(round(item["dph"])))
                     B2.set('pomer', 'N')
                     B2.set('zdph_44', 'N')
                     numB2 = + numB2
