@@ -1,4 +1,4 @@
 import mainWindow
 
 if __name__ == '__main__':
-    mainWindow.displayMainWindow()
+    mainWindow.display_main_window()
